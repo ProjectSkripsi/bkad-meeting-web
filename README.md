@@ -1,1 +1,1 @@
-# bkad-meeting-web
+# meeting-mmanagement

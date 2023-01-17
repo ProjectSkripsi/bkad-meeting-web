@@ -1,11 +1,10 @@
 {
-  "name": "dprd",
+  "name": "ypk2n",
   "version": "5.2.0",
-  "description": "dprd",
+  "description": "ypk2n",
   "private": true,
   "dependencies": {
     "@glidejs/glide": "^3.4.1",
-    "@react-pdf/renderer": "^2.1.1",
     "availity-reactstrap-validation": "^2.6.1",
     "axios": "^0.21.1",
     "chart.js": "2.9.3",

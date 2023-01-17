@@ -62,7 +62,7 @@ const Login = ({ history, loading, error, loginUserAction, isLogin }) => {
         <Colxx xxs='12' md='10' className='mx-auto my-auto'>
           <Card className='auth-card'>
             <div className='position-relative image-side '>
-              <p className='text-white h2'>BKAD Meeting Dashboard</p>
+              <p className='text-white h2'>Meeting Management App</p>
               <p className='text-white mb-0'>
                 Silahkan gunakan email & password untuk login.
                 <br />
@@ -82,10 +82,10 @@ const Login = ({ history, loading, error, loginUserAction, isLogin }) => {
                   </NavLink>
                 </Col>
                 {/* <Col xs='10'>
-                  <p className='text-black h5 mt-4'>
-                    DPRD Provonsi Sulawesi Selatan
-                  </p>
-                </Col> */}
+									<p className='text-black h5 mt-4'>
+										Dinas Perhubungan Sulawesi Selatan
+									</p>
+								</Col> */}
               </Row>
 
               <CardTitle className='mb-4'>
