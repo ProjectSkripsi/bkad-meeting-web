@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardBody,
@@ -12,7 +12,7 @@ import {
   CardHeader,
   List,
   CardTitle,
-  CardText,
+  CardText
 } from 'reactstrap';
 import QRCode from 'qrcode.react';
 import Linkify from 'react-linkify';
@@ -25,6 +25,9 @@ import { adminRoot } from '../../constants/defaultValues';
 import ModalInvite from '../../views/app/Event/ModalInvite';
 import ModalNoTulen from '../../views/app/Event/ModalNoTulen';
 import ModalResult from '../../views/app/Event/ModalEventResult';
+import { getToken } from '../../helpers/Utils';
+import axios from 'axios';
+import { baseUrl } from '../../constants/defaultValues';
 
 moment.locale('id');
 
@@ -35,7 +38,7 @@ const TodoListItem = ({
   className,
   onProccess,
   onSaveNoTulen,
-  onCancel,
+  onCancel
 }) => {
   const [dropdownBasicOpen, setDropdownBasicOpen] = useState(false);
   const [modalInvite, setModalInvite] = useState(false);
@@ -43,10 +46,12 @@ const TodoListItem = ({
   const [titleModal, setTitleModal] = useState('');
   const [modalNoTulen, setModalNoTulen] = useState(false);
   const [modalResult, setModalResult] = useState(false);
+  const [admit, setAdmit] = useState([]);
+  const [modalType, setModalType] = useState('count');
 
   const renderItem = (data) => {
     return (
-      <List type='unstyled'>
+      <List type="unstyled">
         <ul>
           {data.map((i, index) => (
             <li key={index}>{i.name}</li>
@@ -54,6 +59,27 @@ const TodoListItem = ({
         </ul>
       </List>
     );
+  };
+
+  useEffect(() => {
+    getAdmitted();
+  }, []);
+
+  const getAdmitted = async () => {
+    const token = getToken();
+    try {
+      const resp = await axios.get(
+        `${baseUrl}/participant/admitted/${item?._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      setAdmit(resp?.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const downloadQRCode = (value) => {
@@ -71,14 +97,15 @@ const TodoListItem = ({
   };
 
   const onViewodal = (type, data) => {
+    setModalType(type);
     if (type === 'count') {
       setDataMember(data);
       setTitleModal('Data Absensi Meeting');
       setModalInvite(true);
     } else {
-      setModalInvite(true);
+      setDataMember(admit);
       setTitleModal('Peserta Meeting Hadir');
-      setDataMember(data);
+      setModalInvite(true);
     }
   };
 
@@ -88,16 +115,16 @@ const TodoListItem = ({
   };
 
   return (
-    <Colxx xxs='12' className='mb-3'>
+    <Colxx xxs="12" className="mb-3">
       <Card className={className}>
         <CardBody>
-          <div className='d-flex flex-row mb-3 justify-content-between'>
-            <div className='flex-grow-1'>
-              <p className='font-weight-medium mb-0'>
+          <div className="d-flex flex-row mb-3 justify-content-between">
+            <div className="flex-grow-1">
+              <p className="font-weight-medium mb-0">
                 <CardTitle>
                   {item.name}
                   <Badge
-                    className='ml-3'
+                    className="ml-3"
                     color={
                       activeCheck(item.end) && item.status === 'active'
                         ? 'primary'
@@ -118,13 +145,13 @@ const TodoListItem = ({
               </p>
             </div>
 
-            <div className='comment-likes'>
+            <div className="comment-likes">
               <ButtonDropdown
-                direction='left'
+                direction="left"
                 isOpen={dropdownBasicOpen}
                 toggle={() => setDropdownBasicOpen(!dropdownBasicOpen)}
               >
-                <DropdownToggle caret size='xs' color='secondary' outline>
+                <DropdownToggle caret size="xs" color="secondary" outline>
                   Actions
                 </DropdownToggle>
                 <DropdownMenu>
@@ -154,8 +181,8 @@ const TodoListItem = ({
             </div>
           </div>
           <hr />
-          <div className='row'>
-            <div className='col-md-8'>
+          <div className="row">
+            <div className="col-md-8">
               <p>
                 Agenda: <b> {item.agenda || '-'} </b>
               </p>
@@ -210,7 +237,7 @@ const TodoListItem = ({
               </p>
 
               <p>Info Meeting:</p>
-              <List type='unstyled'>
+              <List type="unstyled">
                 <ul>
                   <li>
                     Kategori Meeting:{' '}
@@ -229,10 +256,10 @@ const TodoListItem = ({
                 </ul>
               </List>
             </div>
-            <div className='col-md-4 text-right'>
-              <div className='col'>
+            <div className="col-md-4 text-right">
+              <div className="col">
                 <QRCode
-                  id='qr-gen'
+                  id="qr-gen"
                   value={item._id}
                   size={220}
                   level={'H'}
@@ -240,8 +267,8 @@ const TodoListItem = ({
                 />
               </div>
               <Button
-                color='primary'
-                className='mr-5'
+                color="primary"
+                className="mr-5"
                 onClick={() => downloadQRCode(item._id)}
               >
                 Download QR Code
@@ -249,7 +276,7 @@ const TodoListItem = ({
             </div>
           </div>
         </CardBody>
-        <CardFooter className='text-muted'>
+        <CardFooter className="text-muted">
           Dibuat oleh {get(item, 'createdBy.name', '-')} -{' '}
           {moment(item.createdAt).startOf('second').fromNow()}
         </CardFooter>
@@ -270,6 +297,8 @@ const TodoListItem = ({
         setIsOpen={setModalInvite}
         data={dataMember}
         titleModal={titleModal}
+        modalType={modalType}
+        info={item}
       />
     </Colxx>
   );

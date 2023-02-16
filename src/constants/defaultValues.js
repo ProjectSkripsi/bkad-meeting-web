@@ -12,7 +12,7 @@ export const defaultLocale = 'en';
 export const localeOptions = [
   { id: 'en', name: 'English - LTR', direction: 'ltr' },
   { id: 'es', name: 'Español', direction: 'ltr' },
-  { id: 'enrtl', name: 'English - RTL', direction: 'rtl' },
+  { id: 'enrtl', name: 'English - RTL', direction: 'rtl' }
 ];
 
 export const firebaseConfig = {
@@ -29,7 +29,7 @@ export const currentUser = {
   title: 'djaduls',
   img: '/assets/img/profiles/l-1.jpg',
   date: 'Last seen today 15:24',
-  role: UserRole.Admin,
+  role: UserRole.Admin
 };
 
 export const adminRoot = '/app';
@@ -55,5 +55,5 @@ export const colors = [
   'orangecarrot',
   'redruby',
   'yellowgranola',
-  'greysteel',
+  'greysteel'
 ];
