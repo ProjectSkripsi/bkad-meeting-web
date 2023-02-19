@@ -12,10 +12,7 @@ const UserCardBasic = ({ link = '#', data, collect }) => {
           <ThumbnailImage
             rounded
             small
-            src={
-              data?.avatarUrl ||
-              'https://assets.stickpng.com/images/585e4bf3cb11b227491c339a.png'
-            }
+            src={data?.avatarUrl || '/assets/img/profiles/user-p.png'}
             alt="profile"
             className="m-4"
           />
