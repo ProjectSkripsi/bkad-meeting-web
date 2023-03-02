@@ -7,7 +7,11 @@ import {
   DropdownToggle,
   DropdownItem,
   DropdownMenu,
-  Collapse
+  Collapse,
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem
 } from 'reactstrap';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -17,6 +21,7 @@ import { Colxx, Separator } from '../../../components/common/CustomBootstrap';
 import Breadcrumb from '../../../containers/navs/Breadcrumb';
 import axios from 'axios';
 import { baseUrl } from '../../../constants/defaultValues';
+import { NavLink } from 'react-router-dom';
 import {
   getTodoList,
   getTodoListWithOrder,
@@ -26,6 +31,7 @@ import {
 import TodoListItem from '../../../components/applications/TodoListItem';
 import Pagination from '../../../components/Model/Pagination';
 import { NotificationManager } from '../../../components/common/react-notifications';
+import classnames from 'classnames';
 
 const AddNew = React.lazy(() => import('./AddNew'));
 
@@ -61,6 +67,7 @@ const DataTweet = ({
   const [selectedProgress, setSelectedProgress] = useState({});
   const [modalProccess, setModalProccess] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('upcoming');
 
   const [state, setState] = useState({
     name: '',
@@ -84,12 +91,13 @@ const DataTweet = ({
   useEffect(() => {
     const token = getToken();
     async function fetchData() {
+      setIsLoaded(false);
       const isSearch = search && `&search=${search}`;
       const order =
         selectedOrderOption && `?orderBy=${selectedOrderOption.column}`;
       axios
         .get(
-          `${baseUrl}/event/${currentPage}/${selectedPageSize}${order}${isSearch}`,
+          `${baseUrl}/event/${currentPage}/${selectedPageSize}/${activeTab}${order}${isSearch}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -107,15 +115,16 @@ const DataTweet = ({
         });
     }
     fetchData();
-  }, [selectedPageSize, currentPage, selectedOrderOption, search]);
+  }, [selectedPageSize, currentPage, selectedOrderOption, search, activeTab]);
 
   const fetchNewUpdate = () => {
+    setIsLoaded(false);
     const token = getToken();
     const isSearch = search && `&search=${search}`;
     const order = selectedOrderOption && `?orderBy=${selectedOrderOption.column}`;
     axios
       .get(
-        `${baseUrl}/event/${currentPage}/${selectedPageSize}${order}${isSearch}`,
+        `${baseUrl}/event/${currentPage}/${selectedPageSize}/${activeTab}${order}${isSearch}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -351,38 +360,151 @@ const DataTweet = ({
             </Collapse>
           </div>
           <Separator className="mb-5" />
-          <Row>
-            {isLoaded ? (
-              items &&
-              items.map((item, index) => {
-                return (
-                  <TodoListItem
-                    key={`todo_item_${index}`}
-                    item={item}
-                    isSelected={
-                      isLoaded ? selectedItems.includes(item.id) : false
-                    }
-                    deleteData={deleteData}
-                    onUpdateProgress={(data, type) => {
-                      setSelectedProgress(data);
-                    }}
-                    onProccess={(data) => {
-                      setSelectedProgress(data);
-                    }}
-                    onSaveNoTulen={onSaveNoTulen}
-                    onCancel={onCancel}
-                  />
-                );
-              })
-            ) : (
-              <div className="loading" />
-            )}
-            <Pagination
-              currentPage={currentPage}
-              totalPage={totalPage}
-              onChangePage={(i) => setCurrentPage(i)}
-            />
-          </Row>
+          <Nav tabs className="separator-tabs ml-0 mb-5">
+            <NavItem>
+              <NavLink
+                className={classnames({
+                  active: activeTab === 'upcoming',
+                  'nav-link': true
+                })}
+                onClick={() => setActiveTab('upcoming')}
+                to="#"
+                location={{}}
+              >
+                Berjalan
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({
+                  active: activeTab === 'history',
+                  'nav-link': true
+                })}
+                onClick={() => setActiveTab('history')}
+                to="#"
+                location={{}}
+              >
+                Riwayat
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({
+                  active: activeTab === 'cancel',
+                  'nav-link': true
+                })}
+                onClick={() => setActiveTab('cancel')}
+                to="#"
+                location={{}}
+              >
+                Dibatalkan
+              </NavLink>
+            </NavItem>
+          </Nav>
+          <TabContent activeTab={activeTab}>
+            <TabPane tabId="upcoming">
+              <Row>
+                {isLoaded ? (
+                  items &&
+                  items.map((item, index) => {
+                    return (
+                      <TodoListItem
+                        key={`todo_item_${index}`}
+                        item={item}
+                        isSelected={
+                          isLoaded ? selectedItems.includes(item.id) : false
+                        }
+                        deleteData={deleteData}
+                        onUpdateProgress={(data, type) => {
+                          setSelectedProgress(data);
+                        }}
+                        onProccess={(data) => {
+                          setSelectedProgress(data);
+                        }}
+                        onSaveNoTulen={onSaveNoTulen}
+                        onCancel={onCancel}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="loading" />
+                )}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPage={totalPage}
+                  onChangePage={(i) => setCurrentPage(i)}
+                />
+              </Row>
+            </TabPane>
+            <TabPane tabId="history">
+              <Row>
+                {isLoaded ? (
+                  items &&
+                  items.map((item, index) => {
+                    return (
+                      <TodoListItem
+                        key={`todo_item_${index}`}
+                        item={item}
+                        isSelected={
+                          isLoaded ? selectedItems.includes(item.id) : false
+                        }
+                        deleteData={deleteData}
+                        onUpdateProgress={(data, type) => {
+                          setSelectedProgress(data);
+                        }}
+                        onProccess={(data) => {
+                          setSelectedProgress(data);
+                        }}
+                        onSaveNoTulen={onSaveNoTulen}
+                        onCancel={onCancel}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="loading" />
+                )}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPage={totalPage}
+                  onChangePage={(i) => setCurrentPage(i)}
+                />
+              </Row>
+            </TabPane>
+            <TabPane tabId="cancel">
+              <Row>
+                {isLoaded ? (
+                  items &&
+                  items.map((item, index) => {
+                    return (
+                      <TodoListItem
+                        key={`todo_item_${index}`}
+                        item={item}
+                        isSelected={
+                          isLoaded ? selectedItems.includes(item.id) : false
+                        }
+                        deleteData={deleteData}
+                        onUpdateProgress={(data, type) => {
+                          setSelectedProgress(data);
+                        }}
+                        onProccess={(data) => {
+                          setSelectedProgress(data);
+                        }}
+                        onSaveNoTulen={onSaveNoTulen}
+                        onCancel={onCancel}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="loading" />
+                )}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPage={totalPage}
+                  onChangePage={(i) => setCurrentPage(i)}
+                />
+              </Row>
+            </TabPane>
+          </TabContent>
         </Colxx>
       </Row>
 
