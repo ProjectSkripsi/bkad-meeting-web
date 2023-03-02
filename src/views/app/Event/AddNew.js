@@ -78,7 +78,7 @@ const AddNewModal = ({
   }, []);
 
   var date = new Date();
-  const minDate = date.setDate(date.getDate() + 1);
+  const minDate = date.setDate(date.getDate());
 
   return (
     <Modal
