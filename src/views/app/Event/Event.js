@@ -393,7 +393,7 @@ const DataTweet = ({
               </div>
             </Collapse>
           </div>
-          <Separator className="mb-5" />
+          {/* <Separator className="mb-5" /> */}
           <Nav tabs className="separator-tabs ml-0 mb-5">
             <NavItem>
               <NavLink
