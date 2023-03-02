@@ -87,7 +87,10 @@ const AddNewModal = ({
       wrapClassName="modal-right"
       backdrop="static"
     >
-      <ModalHeader toggle={toggleModal}>Buat Meeting</ModalHeader>
+      <ModalHeader toggle={toggleModal}>
+        {' '}
+        {!isUpdate ? 'Buat Meeting' : 'Edit Meeting'}
+      </ModalHeader>
       <ModalBody>
         <AvForm
           className="av-tooltip tooltip-label-right"
@@ -114,8 +117,10 @@ const AddNewModal = ({
               name="meetingRoom"
               label="Ruangan"
               onChange={onChange}
+              value={isUpdate && data.meetingRoom._id}
             >
               <option value=""></option>
+
               {rooms &&
                 rooms.map((item) => (
                   <option key={item._id} value={item._id}>
@@ -153,17 +158,21 @@ const AddNewModal = ({
             showDisabledMonthNavigation
             minDate={startDateTime}
           />
-          <label>Peserta</label>
-          <Select
-            components={{ Input: CustomSelectInput }}
-            className="react-select"
-            classNamePrefix="react-select"
-            isMulti
-            name="form-field-name"
-            value={selectedOptions}
-            onChange={setSelectedOptions}
-            options={selectData}
-          />
+          {!isUpdate && (
+            <>
+              <label>Peserta</label>
+              <Select
+                components={{ Input: CustomSelectInput }}
+                className="react-select"
+                classNamePrefix="react-select"
+                isMulti
+                name="form-field-name"
+                value={selectedOptions}
+                onChange={setSelectedOptions}
+                options={selectData}
+              />
+            </>
+          )}
 
           <AvGroup className="mt-4">
             <Label>Keterangan</Label>

@@ -68,6 +68,7 @@ const DataTweet = ({
   const [modalProccess, setModalProccess] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('upcoming');
+  const [isUpdate, setUpdate] = useState(false);
 
   const [state, setState] = useState({
     name: '',
@@ -199,44 +200,72 @@ const DataTweet = ({
     setSelectedOptions(data);
   };
 
-  const onSubmit = () => {
+  const onSubmit = (event, errors, values) => {
     const { name, agenda, meetingRoom, description, units } = state;
     const token = getToken();
-
-    axios
-      .post(
-        `${baseUrl}/event`,
-        {
-          name,
-          agenda,
-          meetingRoom,
-          description,
-          start: startDateTime,
-          end: endDateTime,
-          units
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
+    if (!isUpdate) {
+      axios
+        .post(
+          `${baseUrl}/event`,
+          {
+            name,
+            agenda,
+            meetingRoom,
+            description,
+            start: startDateTime,
+            end: endDateTime,
+            units
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        }
-      )
-      .then((res) => {
-        if (res.status === 201) {
-          setModalOpen(!modalOpen);
-          fetchNewUpdate();
-          setSelectedOptions([]);
-          setState({
-            name: '',
-            agenda: '',
-            meetingRoom: '',
-            description: ''
-          });
-          createNotification('success', 'Berhasil menambahkan meeting baru');
-        } else {
-          createNotification('warning', 'Terjadi kesalahan');
-        }
-      });
+        )
+        .then((res) => {
+          if (res.status === 201) {
+            setModalOpen(!modalOpen);
+            fetchNewUpdate();
+            setSelectedOptions([]);
+            setState({});
+            createNotification('success', 'Berhasil menambahkan meeting baru');
+          } else {
+            createNotification('warning', 'Terjadi kesalahan');
+          }
+        });
+    } else {
+      axios
+        .put(
+          `${baseUrl}/event/${state?._id}`,
+          {
+            name,
+            agenda,
+            meetingRoom,
+            description,
+            start: startDateTime,
+            end: endDateTime
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            setModalOpen(!modalOpen);
+            setSelectedOptions([]);
+            setUpdate(false);
+            setState({});
+            createNotification('success', 'Berhasil update meeting');
+            setStartDateTime(null);
+            setEndDateTime(null);
+            fetchNewUpdate();
+          } else {
+            createNotification('warning', 'Terjadi kesalahan');
+          }
+        });
+    }
   };
 
   const onSaveNoTulen = (id, eventResult, next) => {
@@ -306,7 +335,12 @@ const DataTweet = ({
                 color="primary"
                 size="lg"
                 className="top-right-button"
-                onClick={() => setModalOpen(!modalOpen)}
+                onClick={() => {
+                  setState({});
+                  setStartDateTime(null);
+                  setEndDateTime(null);
+                  setModalOpen(!modalOpen);
+                }}
               >
                 <IntlMessages id="pages.add-new" />
               </Button>
@@ -423,6 +457,13 @@ const DataTweet = ({
                         }}
                         onSaveNoTulen={onSaveNoTulen}
                         onCancel={onCancel}
+                        onUpdate={() => {
+                          setState(item);
+                          setStartDateTime(new Date(item.start));
+                          setEndDateTime(new Date(item.end));
+                          setUpdate(true);
+                          setModalOpen(true);
+                        }}
                       />
                     );
                   })
@@ -512,7 +553,7 @@ const DataTweet = ({
         modalOpen={modalOpen}
         data={state}
         toggleModal={() => {
-          // setIsUpdate(false);
+          setUpdate(false);
           setModalOpen(!modalOpen);
         }}
         onChange={onChange}
@@ -523,6 +564,7 @@ const DataTweet = ({
         endDateTime={endDateTime}
         setSelectedOptions={onSelectMember}
         selectedOptions={selectedOptions}
+        isUpdate={isUpdate}
       />
     </>
   );

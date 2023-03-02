@@ -38,7 +38,8 @@ const TodoListItem = ({
   className,
   onProccess,
   onSaveNoTulen,
-  onCancel
+  onCancel,
+  onUpdate
 }) => {
   const [dropdownBasicOpen, setDropdownBasicOpen] = useState(false);
   const [modalInvite, setModalInvite] = useState(false);
@@ -155,6 +156,9 @@ const TodoListItem = ({
                   Actions
                 </DropdownToggle>
                 <DropdownMenu>
+                  {item.status === 'active' && activeCheck(item.end) && (
+                    <DropdownItem onClick={onUpdate}>Edit</DropdownItem>
+                  )}
                   <DropdownItem onClick={() => setModalNoTulen(true)}>
                     NoTulen
                   </DropdownItem>
